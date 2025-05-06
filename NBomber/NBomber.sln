@@ -1,10 +1,9 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBomberTestAPI", "NBomberTest/NBomberTestAPI.csproj", "{62C2C2B7-777F-48FB-992F-828BEE6C4761}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBomberTestConsole", "NBomberTestConsole/NBomberTestConsole.csproj", "{A937920F-A6DF-4C66-9A17-DDDF8B92AEB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBomberTestConsole", "NBomberTestConsole\NBomberTestConsole.csproj", "{A937920F-A6DF-4C66-9A17-DDDF8B92AEB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{62C2C2B7-777F-48FB-992F-828BEE6C4761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62C2C2B7-777F-48FB-992F-828BEE6C4761}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62C2C2B7-777F-48FB-992F-828BEE6C4761}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62C2C2B7-777F-48FB-992F-828BEE6C4761}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A937920F-A6DF-4C66-9A17-DDDF8B92AEB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A937920F-A6DF-4C66-9A17-DDDF8B92AEB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A937920F-A6DF-4C66-9A17-DDDF8B92AEB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
