@@ -1,0 +1,35 @@
+name: Run NBomber Load Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-nbomber:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: NBomber/NBomberTestConsole
+
+      - name: Build the test project
+        run: dotnet build --configuration Release
+        working-directory: NBomber/NBomberTestConsole
+
+      - name: Run NBomber load test
+        run: dotnet run --configuration Release
+        working-directory: NBomber/NBomberTestConsole
+
+      - name: Upload NBomber report
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbomber-report
+          path: NBomber/NBomberTestConsole/reports/
