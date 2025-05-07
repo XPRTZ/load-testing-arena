@@ -1,0 +1,15 @@
+version: v0.1
+testId: quickpizza-test
+displayName: QuickPizza Load Test
+testPlan: locust/quickpizza.py
+testType: Locust
+engineInstances: 1
+splitAllCSVs: false
+
+env:
+  - name: LOCUST_HOST
+    value: https://quickpizza.grafana.com
+
+failureCriteria:
+  - p95(response_time_ms) > 2000
+  - percentage(error) > 2

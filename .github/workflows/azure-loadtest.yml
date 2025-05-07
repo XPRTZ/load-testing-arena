@@ -1,0 +1,24 @@
+name: Run Azure Load Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  azure-load-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Run Azure Load Test
+        uses: azure/load-testing@v1.1.27
+        with:
+          loadTestConfigFile: azure-load-tests/test.yaml
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          loadTestResource: ${{ secrets.AZURE_LOAD_TEST_RESOURCE }}
