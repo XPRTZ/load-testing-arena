@@ -1,55 +1,27 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Threading.Tasks;
-using NBomber.CSharp;
+﻿using NBomber.CSharp;
 using NBomber.Contracts;
-
-Console.WriteLine("Starting load test...");
+using NBomber.Contracts.Stats;
 
 var httpClient = new HttpClient();
 
-// Define scenario for GET https://quickpizza.grafana.com/
-var quickPizzaScenario = Scenario.Create("quickpizza_homepage", async context =>
+var scenario = Scenario.Create("quickpizza_homepage", async context =>
     {
-        var sw = Stopwatch.StartNew();
-
-        try
-        {
-            var response = await httpClient.GetAsync("https://quickpizza.grafana.com/");
-            sw.Stop();
-
-            var contentLength = response.Content.Headers.ContentLength ?? 0;
-
-            return response.IsSuccessStatusCode
-                ? Response.Ok(
-                    statusCode: ((int)response.StatusCode).ToString(),
-                    sizeBytes: contentLength,
-                    message: "Homepage Success",
-                    customLatencyMs: sw.Elapsed.TotalMilliseconds)
-                : Response.Fail(
-                    statusCode: ((int)response.StatusCode).ToString(),
-                    message: "Homepage Failed",
-                    sizeBytes: contentLength,
-                    customLatencyMs: sw.Elapsed.TotalMilliseconds);
-        }
-        catch (Exception ex)
-        {
-            sw.Stop();
-            return Response.Fail<string>(
-                message: $"Exception: {ex.Message}",
-                customLatencyMs: sw.Elapsed.TotalMilliseconds);
-        }
+        var response = await httpClient.GetAsync("https://quickpizza.grafana.com");
+        await Task.Delay(1000);
+        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
     })
     .WithoutWarmUp()
     .WithLoadSimulations(
-        Simulation.Inject(rate: 10, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10)),
-        Simulation.RampingInject(rate: 30, interval: TimeSpan.FromMilliseconds(250), during: TimeSpan.FromSeconds(10))
+        Simulation.RampingInject(rate: 0, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(60)),  // Ramp-up to 20 users
+        Simulation.Inject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(180)),       // Hold at 20 users
+        Simulation.RampingInject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(60))  // Ramp-down
+    )
+    .WithThresholds(
+        Threshold.Create("quickpizza_homepage", stats => stats.Fail.Request.Percent < 2),        // Fail rate < 2%
+        Threshold.Create("quickpizza_homepage", stats => stats.Ok.Latency.Percent95 < 2000)      // p95 latency < 2000ms
     );
 
 NBomberRunner
-    .RegisterScenarios(quickPizzaScenario)
+    .RegisterScenarios(scenario)
+    .WithReportFormats(ReportFormat.Html, ReportFormat.Md)
     .Run();
-
-Console.WriteLine("Load test completed. Press any key to exit...");
-Console.ReadLine();
