@@ -10,6 +10,10 @@ env:
   - name: LOCUST_HOST
     value: https://quickpizza.grafana.com
 
+duration: 300        # 5 minutes in seconds
+users: 20            # 20 concurrent users
+spawnRate: 0.33      # Ramp-up: 20 users over 60 sec ≈ 0.33 users/sec
+
 failureCriteria:
   - p95(response_time_ms) > 2000
   - percentage(error) > 2
