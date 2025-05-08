@@ -9,6 +9,12 @@ splitAllCSVs: false
 env:
   - name: LOCUST_HOST
     value: https://quickpizza.grafana.com
+  - name: LOCUST_USERS
+    value: "20"
+  - name: LOCUST_SPAWN_RATE
+    value: "0.33"
+  - name: LOCUST_RUN_TIME
+    value: "5"
 
 failureCriteria:
   - p95(response_time_ms) > 2000
