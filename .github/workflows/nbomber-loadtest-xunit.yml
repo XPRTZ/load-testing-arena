@@ -29,12 +29,11 @@ jobs:
           INFLUXDB_TOKEN: ${{ secrets.INFLUXDB_TOKEN }}
         run: |
           sed -i 's|"Token": "REPLACE_ME"|"Token": "'$INFLUXDB_TOKEN'"|g' infra-config.json
-          echo "----- Patched config -----"
-          cat infra-config.json
-          echo "---------------------------"
         working-directory: NBomber/NBomberXUnitTests
 
       - name: Run NBomber XUnit test
+        env:
+          INFLUXDB_TOKEN: ${{ secrets.INFLUXDB_TOKEN }}
         run: |
           mkdir -p TestResults
           dotnet test --configuration Release --no-build \
@@ -56,7 +55,7 @@ jobs:
 
       - name: Publish test results to GitHub
         uses: dorny/test-reporter@v1
-        if: always() # ensures this step runs even if tests fail
+        if: always()
         with:
           name: NBomber XUnit Results
           path: NBomber/NBomberXUnitTests/TestResults/*.trx
