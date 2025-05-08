@@ -24,6 +24,11 @@ jobs:
         run: dotnet build --configuration Release
         working-directory: NBomber/NBomberTestConsole
 
+      - name: Inject InfluxDB token
+        run: |
+          sed -i 's|"Token": "REPLACE_ME"|"Token": "'"${{ secrets.INFLUXDB_TOKEN }}"'"|g' infra-config.json
+        working-directory: NBomber/NBomberTestConsole
+
       - name: Run NBomber load test
         run: dotnet run --configuration Release
         working-directory: NBomber/NBomberTestConsole
