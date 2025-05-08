@@ -43,9 +43,9 @@ var scenario = Scenario.Create("quickpizza_homepage", async context =>
     })
     .WithoutWarmUp()
     .WithLoadSimulations(
-        Simulation.RampingInject(rate: 0, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(60)),
-        Simulation.Inject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(180)),
-        Simulation.RampingInject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(60))
+        Simulation.RampingInject(rate: 0, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10)),
+        Simulation.Inject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(15)),
+        Simulation.RampingInject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10))
     )
     .WithThresholds(
         Threshold.Create(scenarioStats => scenarioStats.Fail.Request.Percent < 2),
@@ -53,8 +53,13 @@ var scenario = Scenario.Create("quickpizza_homepage", async context =>
         Threshold.Create(stats => stats.Ok.Latency.Percent95 < 2000, abortWhenErrorCount: 5)
     );
 
+var isCi = Environment.GetEnvironmentVariable("CI") == "true";
+var postFix = $"CONSOLE-{(isCi ? "CI" : "MANUAL")}";
+var sessionId = $"{DateTime.UtcNow:yyyyMMdd-HHmmss}-{postFix}";
+
 NBomberRunner
     .RegisterScenarios(scenario)
+    .WithSessionId(sessionId)
     .WithReportFormats(ReportFormat.Html, ReportFormat.Md)
     .WithReportingInterval(TimeSpan.FromSeconds(5))
     .WithReportingSinks(influxDbSink)

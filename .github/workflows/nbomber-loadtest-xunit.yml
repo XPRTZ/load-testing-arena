@@ -1,0 +1,63 @@
+name: NBomber XUnit Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-xunit-nbomber:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: NBomber/NBomberXUnitTests
+
+      - name: Build the test project
+        run: dotnet build --configuration Release
+        working-directory: NBomber/NBomberXUnitTests
+
+      - name: Inject InfluxDB token
+        env:
+          INFLUXDB_TOKEN: ${{ secrets.INFLUXDB_TOKEN }}
+        run: |
+          sed -i 's|"Token": "REPLACE_ME"|"Token": "'$INFLUXDB_TOKEN'"|g' infra-config.json
+          echo "----- Patched config -----"
+          cat infra-config.json
+          echo "---------------------------"
+        working-directory: NBomber/NBomberXUnitTests
+
+      - name: Run NBomber XUnit test
+        run: |
+          mkdir -p TestResults
+          dotnet test --configuration Release --no-build \
+            --logger "trx;LogFileName=nbomber-xunit.trx" \
+            --results-directory TestResults
+        working-directory: NBomber/NBomberXUnitTests
+
+      - name: Upload NBomber HTML/MD report
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbomber-xunit-report
+          path: NBomber/NBomberXUnitTests/bin/Release/net9.0/reports/
+
+      - name: Upload raw test results (TRX)
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: NBomber/NBomberXUnitTests/TestResults/
+
+      - name: Publish test results to GitHub
+        uses: dorny/test-reporter@v1
+        if: always() # ensures this step runs even if tests fail
+        with:
+          name: NBomber XUnit Results
+          path: NBomber/NBomberXUnitTests/TestResults/*.trx
+          reporter: dotnet-trx

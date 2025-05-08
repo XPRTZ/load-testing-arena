@@ -1,0 +1,14 @@
+{
+  "InfluxDBSink": {
+    "Url": "https://eu-central-1-1.aws.cloud2.influxdata.com",
+    "Token": "REPLACE_ME",
+    "Org": "NBomber",
+    "Bucket": "nbomber",
+    "CustomTags": [
+      {
+        "Key": "environment",
+        "Value": "test"
+      }
+    ]
+  }
+}
