@@ -7,9 +7,6 @@ using Microsoft.Extensions.Configuration;
 
 var httpClient = new HttpClient();
 
-var failMode = args.Contains("--fail");
-Console.WriteLine($"Fail mode: {failMode}");
-
 #if DEBUG
 var config = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
@@ -53,7 +50,7 @@ var scenario = Scenario.Create("quickpizza_homepage", async context =>
     .WithThresholds(
         Threshold.Create(scenarioStats => scenarioStats.Fail.Request.Percent < 2),
         Threshold.Create("step_1", stepStats => stepStats.Fail.Request.Percent < 2),
-        Threshold.Create(stats => stats.Ok.Latency.Percent95 < (failMode ? 20 : 2000), abortWhenErrorCount: 5)
+        Threshold.Create(stats => stats.Ok.Latency.Percent95 < 2000, abortWhenErrorCount: 5)
     );
 
 NBomberRunner
