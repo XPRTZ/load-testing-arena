@@ -22,7 +22,7 @@ json = json.Replace("\"Token\": \"REPLACE_ME\"", $"\"Token\": \"{token}\"");
 var infraConfigPath = Path.Combine(Path.GetTempPath(), "patched-infra-config.json");
 File.WriteAllText(infraConfigPath, json);
 #else
-var tempPath = "infra-config.json";
+var infraConfigPath = "infra-config.json";
 #endif
 
 var influxDbSink = new InfluxDBSink();
