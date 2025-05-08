@@ -14,7 +14,7 @@ env:
   - name: LOCUST_SPAWN_RATE
     value: "0.33"
   - name: LOCUST_RUN_TIME
-    value: "5"
+    value: "300"
 
 failureCriteria:
   - p95(response_time_ms) > 2000
